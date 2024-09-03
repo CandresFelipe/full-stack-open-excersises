@@ -4,9 +4,9 @@ import { Part } from "./Part";
 export const Content = (props) => {
   return (
     <Fragment>
-      <Part item={props.parts[0]} />
-      <Part item={props.parts[1]} />
-      <Part item={props.parts[2]} />
+      {Object.entries(props.options).map(([key, value], index) => (
+        <Part name={key} value={value} key={index} />
+      ))}
     </Fragment>
   );
 };
