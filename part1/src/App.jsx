@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "./Button";
 import { Header } from "./Header";
-import { Content } from "./Content";
+import { Statistics } from "./Statistics";
 
 const App = () => {
   const [statisticOptions, setStatisticOptions] = useState({
@@ -31,7 +31,13 @@ const App = () => {
         />
       ))}
       <Header title={"Statistic"} />
-      <Content options={statisticOptions} />
+      {statisticOptions.bad === 0 &&
+      statisticOptions.good === 0 &&
+      statisticOptions.neutral === 0 ? (
+        <p>No feedback given.</p>
+      ) : (
+        <Statistics statisticData={statisticOptions} />
+      )}
     </div>
   );
 };
