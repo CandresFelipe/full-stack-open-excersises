@@ -1,58 +1,37 @@
-import { Course } from "./Course/Course";
-import { Header } from "./Course/Header";
+import { useState } from "react";
+import { Header } from "./components/Header";
 
 const App = () => {
-  const title = "Web development curriculum";
-  const courses = [
-    {
-      name: "Half Stack application development",
-      id: 1,
-      parts: [
-        {
-          name: "Fundamentals of React",
-          exercises: 10,
-          id: 1,
-        },
-        {
-          name: "Using props to pass data",
-          exercises: 7,
-          id: 2,
-        },
-        {
-          name: "State of a component",
-          exercises: 14,
-          id: 3,
-        },
-        {
-          name: "Redux",
-          exercises: 11,
-          id: 4,
-        },
-      ],
-    },
-    {
-      name: "Node.js",
-      id: 2,
-      parts: [
-        {
-          name: "Routing",
-          exercises: 3,
-          id: 1,
-        },
-        {
-          name: "Middlewares",
-          exercises: 7,
-          id: 2,
-        },
-      ],
-    },
-  ];
+  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [newName, setNewName] = useState("");
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    const newPerson = {
+      name: newName,
+    };
+    setPersons(persons.concat(newPerson));
+    setNewName("");
+  };
+
+  const onNameInputChange = (event) => {
+    setNewName(event.target.value);
+  };
 
   return (
     <div>
-      <Header title={title} />
-      {courses.map((course) => (
-        <Course course={course} key={course.id} />
+      <Header title={"Phonebook"} variant="h2" />
+      <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={onNameInputChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      {persons.map((person) => (
+        <p key={person.name}>{person.name}</p>
       ))}
     </div>
   );
