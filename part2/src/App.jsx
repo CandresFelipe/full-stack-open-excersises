@@ -7,6 +7,11 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
+
+    if (persons.some((person) => person.name === newName)) {
+      window.alert(`Person with name ${newName} already was added.`);
+      return;
+    }
     const newPerson = {
       name: newName,
     };
