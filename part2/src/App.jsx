@@ -3,21 +3,15 @@ import { Header } from "./components/Header";
 import { Filter } from "./components/Filter";
 import { Form } from "./components/Form";
 import { Persons } from "./Persons";
-import axios from "axios";
+import personService from "./services/personService";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
-  const requestDataFun = async () => {
-    return await axios
-      .get("http://localhost:3001/persons")
-      .then((res) => setPersons(res.data));
-  };
-
   useEffect(() => {
-    requestDataFun();
+    personService.getAllPersons().then((res) => setPersons(res));
   }, []);
 
   const addPerson = (event) => {
@@ -31,15 +25,18 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: Number(persons.length + 1),
+      id: String(persons.length + 1),
     };
     if (!(newPerson.name && newPerson.number)) {
       window.alert("Inputs are not fully completed");
       return;
     }
-    setPersons(persons.concat(newPerson));
-    setNewName("");
-    setNewNumber("");
+
+    personService.createPerson(newPerson).then((res) => {
+      setPersons(persons.concat(res));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const onNameInputChange = (event) => {
