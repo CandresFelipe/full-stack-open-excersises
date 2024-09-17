@@ -40,9 +40,13 @@ const App = () => {
   };
 
   const deletePerson = (id) => {
-    personService.deletePerson(id).then(() => {
-      setPersons(persons.filter((p) => p.id !== id));
-    });
+    const toremovePerson = persons.find((p) => p.id === id);
+
+    if (window.confirm(`Delete ${toremovePerson.name}`)) {
+      personService.deletePerson(id).then(() => {
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
   };
 
   const onNameInputChange = (event) => {
