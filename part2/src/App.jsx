@@ -14,12 +14,32 @@ const App = () => {
     personService.getAllPersons().then((res) => setPersons(res));
   }, []);
 
+  const editPersonNumber = (person) => {
+    if (
+      window.confirm(
+        `${person.name} is already added to the phonebook. Do you want to replace older phone with new one?`
+      )
+    ) {
+      const editedPerson = {
+        ...person,
+        number: newNumber,
+      };
+
+      personService.updatePerson(editedPerson).then(() => {
+        //personService.getAllPersons().then((res) => setPersons(res)) another way for getting same result.
+        setPersons(persons.map((p) => (p.id !== person.id ? p : editedPerson)));
+        setNewName("");
+        setNewNumber("");
+      });
+    }
+  };
+
   const addPerson = (event) => {
     event.preventDefault();
 
     if (persons.some((person) => person.name === newName)) {
-      window.alert(`Person with name ${newName} already was added.`);
-      setNewName("");
+      const person = persons.find((person) => person.name === newName);
+      editPersonNumber(person);
       return;
     }
     const newPerson = {
