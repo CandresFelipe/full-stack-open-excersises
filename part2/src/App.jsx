@@ -4,15 +4,30 @@ import { Filter } from "./components/Filter";
 import { Form } from "./components/Form";
 import { Persons } from "./Persons";
 import personService from "./services/personService";
+import "./styles.css";
+import { Notification } from "./components/Notification";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState({
+    value: null,
+    type: "error",
+  });
 
   useEffect(() => {
     personService.getAllPersons().then((res) => setPersons(res));
   }, []);
+
+  const clearNotificationMessage = () =>
+    setTimeout(() => {
+      setMessage({
+        value: null,
+        type: "error",
+      });
+    }, 5000);
 
   const editPersonNumber = (person) => {
     if (
@@ -30,6 +45,11 @@ const App = () => {
         setPersons(persons.map((p) => (p.id !== person.id ? p : editedPerson)));
         setNewName("");
         setNewNumber("");
+        setMessage({
+          value: `Phone number edited successfully for ${editedPerson.name}`,
+          type: "success",
+        });
+        clearNotificationMessage();
       });
     }
   };
@@ -56,6 +76,11 @@ const App = () => {
       setPersons(persons.concat(res));
       setNewName("");
       setNewNumber("");
+      setMessage({
+        type: "success",
+        value: `Added ${newPerson.name}!`,
+      });
+      clearNotificationMessage();
     });
   };
 
@@ -65,6 +90,11 @@ const App = () => {
     if (window.confirm(`Delete ${toremovePerson.name}`)) {
       personService.deletePerson(id).then(() => {
         setPersons(persons.filter((p) => p.id !== id));
+        setMessage({
+          value: `Person removed!`,
+          type: "success",
+        });
+        clearNotificationMessage();
       });
     }
   };
@@ -106,6 +136,7 @@ const App = () => {
   return (
     <div>
       <Header title={"Phonebook"} variant="h2" />
+      <Notification messsage={message.value} type={message.type} />
       <Filter filterValue={filter} onFilter={onFilterChange} />
       <Header title="Add new" variant="h2" />
       <Form inputs={inputs} onSubmit={addPerson} />
