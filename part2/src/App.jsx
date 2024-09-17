@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Header } from "./components/Header";
+import { Filter } from "./components/Filter";
+import { Form } from "./components/Form";
+import { Persons } from "./Persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -23,6 +26,7 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
+      id: Number(persons.length + 1),
     };
     if (!(newPerson.name && newPerson.number)) {
       window.alert("Inputs are not fully completed");
@@ -45,6 +49,19 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  const inputs = [
+    {
+      label: "Name",
+      onChange: onNameInputChange,
+      value: newName,
+    },
+    {
+      label: "Number",
+      onChange: onNumberInputChange,
+      value: newNumber,
+    },
+  ];
+
   const filteredPersons = filter
     ? persons.filter((person) => {
         const descomposedName = person.name.toLowerCase().includes(filter);
@@ -57,26 +74,11 @@ const App = () => {
   return (
     <div>
       <Header title={"Phonebook"} variant="h2" />
-      <div>
-        Filter shown with : <input value={filter} onChange={onFilterChange} />{" "}
-      </div>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={onNameInputChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={onNumberInputChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {filteredPersons.map((person) => (
-        <p key={person.name}>
-          {person.name} {person.number}
-        </p>
-      ))}
+      <Filter filterValue={filter} onFilter={onFilterChange} />
+      <Header title="Add new" variant="h2" />
+      <Form inputs={inputs} onSubmit={addPerson} />
+      <Header title="Numbers" variant="h2" />
+      <Persons persons={filteredPersons} />
     </div>
   );
 };
