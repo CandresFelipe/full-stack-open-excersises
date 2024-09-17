@@ -1,14 +1,19 @@
-export const Persons = ({ persons }) => {
+import { Button } from "./components/Button";
+
+export const Persons = ({ persons, onDelete }) => {
   return (
     <div>
       <ul>
-        {persons.map((person) => (
-          <li key={person.id}>
-            <p>
-              {person.name} {person.number}
-            </p>
-          </li>
-        ))}
+        {persons.map((person) => {
+          return (
+            <li key={person.id}>
+              <p>
+                {person.name} {person.number}{" "}
+                <Button label="delete" onClick={() => onDelete(person.id)} />
+              </p>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

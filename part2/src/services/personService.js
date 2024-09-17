@@ -14,8 +14,13 @@ function createPerson(person) {
     return axios.post(URL, person).then(res => res.data)
 }
 
+function deletePerson(id) {
+    return axios.delete(`${URL}/${id}`)
+}
+
 export default {
     getAllPersons,
     updatePerson,
     createPerson,
+    deletePerson
 }

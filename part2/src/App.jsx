@@ -39,6 +39,12 @@ const App = () => {
     });
   };
 
+  const deletePerson = (id) => {
+    personService.deletePerson(id).then(() => {
+      setPersons(persons.filter((p) => p.id !== id));
+    });
+  };
+
   const onNameInputChange = (event) => {
     setNewName(event.target.value);
   };
@@ -80,7 +86,7 @@ const App = () => {
       <Header title="Add new" variant="h2" />
       <Form inputs={inputs} onSubmit={addPerson} />
       <Header title="Numbers" variant="h2" />
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} onDelete={deletePerson} />
     </div>
   );
 };
