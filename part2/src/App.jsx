@@ -40,17 +40,31 @@ const App = () => {
         number: newNumber,
       };
 
-      personService.updatePerson(editedPerson).then(() => {
-        //personService.getAllPersons().then((res) => setPersons(res)) another way for getting same result.
-        setPersons(persons.map((p) => (p.id !== person.id ? p : editedPerson)));
-        setNewName("");
-        setNewNumber("");
-        setMessage({
-          value: `Phone number edited successfully for ${editedPerson.name}`,
-          type: "success",
+      personService
+        .updatePerson(editedPerson)
+        .then(() => {
+          //personService.getAllPersons().then((res) => setPersons(res)) another way for getting same result.
+          setPersons(
+            persons.map((p) => (p.id !== person.id ? p : editedPerson))
+          );
+          setNewName("");
+          setNewNumber("");
+          setMessage({
+            value: `Phone number edited successfully for ${editedPerson.name}`,
+            type: "success",
+          });
+          clearNotificationMessage();
+        })
+        .catch((error) => {
+          if (error.status === 404) {
+            setMessage({
+              value: `Information of ${editedPerson.name} has already been removed from server`,
+              type: "error",
+            });
+            personService.getAllPersons().then((res) => setPersons(res));
+            clearNotificationMessage();
+          }
         });
-        clearNotificationMessage();
-      });
     }
   };
 
