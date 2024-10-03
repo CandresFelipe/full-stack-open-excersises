@@ -4,6 +4,7 @@ import { getAllCountries } from "./services/countriesService";
 import { searcher } from "./utils/searcher";
 import { Country } from "./Country";
 import { Button } from "./components/Button";
+import { Weather } from "./Weather";
 
 const App = () => {
   const [inputValue, setInputValue] = useState("");
@@ -45,17 +46,23 @@ const App = () => {
       {filteredCountries.length <= 10 &&
         filteredCountries.length > 1 &&
         !showCountryToggle &&
-        filteredCountries.map((country) => (
-          <>
-            <p key={country.name.common}>{country.name.common}</p>{" "}
+        filteredCountries.map((country, index) => (
+          <div key={`${country.name.common}/${index}`}>
+            <p>{country.name.common}</p>{" "}
             <Button label="show" onClick={() => onShowCountry(country)} />
-          </>
+          </div>
         ))}
       {filteredCountries.length === 1 && !showCountryToggle && (
-        <Country country={filteredCountries[0]} />
+        <div>
+          <Country country={filteredCountries[0]} />
+          <Weather coords={filteredCountries[0].latlng} />
+        </div>
       )}
       {showCountryToggle && !!toShowCountry && (
-        <Country country={toShowCountry} />
+        <div>
+          <Country country={toShowCountry} />
+          <Weather coords={toShowCountry.latlng} />
+        </div>
       )}
     </div>
   );
