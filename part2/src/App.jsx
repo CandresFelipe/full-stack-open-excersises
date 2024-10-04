@@ -1,69 +1,84 @@
-import { useEffect, useState } from "react";
-import "./styles.css";
-import { getAllCountries } from "./services/countriesService";
-import { searcher } from "./utils/searcher";
-import { Country } from "./Country";
-import { Button } from "./components/Button";
-import { Weather } from "./Weather";
+import { useState } from "react";
+import { Header } from "./components/Header";
+import { Filter } from "./components/Filter";
+import { Form } from "./components/Form";
+import { Persons } from "./Persons";
 
 const App = () => {
-  const [inputValue, setInputValue] = useState("");
-  const [countries, setCountries] = useState([]);
-  const [filteredCountries, setFilteredCountries] = useState([]);
-  const [showCountryToggle, setShowCountryToggle] = useState(false);
-  const [toShowCountry, setToShowCountry] = useState();
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "040-123456", id: 1 },
+    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
+    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
+    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
+  ]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [filter, setFilter] = useState("");
 
-  const onHandleInput = (e) => {
-    setInputValue(e.target.value);
-    setShowCountryToggle(false);
-  };
+  const addPerson = (event) => {
+    event.preventDefault();
 
-  useEffect(() => {
-    if (inputValue === "") {
-      setFilteredCountries([]);
+    if (persons.some((person) => person.name === newName)) {
+      window.alert(`Person with name ${newName} already was added.`);
+      setNewName("");
       return;
     }
-    const filteredData = searcher(inputValue, countries);
-    setFilteredCountries(filteredData);
-  }, [inputValue]);
-
-  useEffect(() => {
-    getAllCountries().then((data) => setCountries(data));
-  }, []);
-
-  const onShowCountry = (country) => {
-    setShowCountryToggle(true);
-    setToShowCountry(country);
+    const newPerson = {
+      name: newName,
+      number: newNumber,
+      id: Number(persons.length + 1),
+    };
+    if (!(newPerson.name && newPerson.number)) {
+      window.alert("Inputs are not fully completed");
+      return;
+    }
+    setPersons(persons.concat(newPerson));
+    setNewName("");
+    setNewNumber("");
   };
+
+  const onNameInputChange = (event) => {
+    setNewName(event.target.value);
+  };
+
+  const onNumberInputChange = (event) => {
+    setNewNumber(event.target.value);
+  };
+
+  const onFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
+  const inputs = [
+    {
+      label: "Name",
+      onChange: onNameInputChange,
+      value: newName,
+    },
+    {
+      label: "Number",
+      onChange: onNumberInputChange,
+      value: newNumber,
+    },
+  ];
+
+  const filteredPersons = filter
+    ? persons.filter((person) => {
+        const descomposedName = person.name.toLowerCase().includes(filter);
+        if (descomposedName) {
+          return person;
+        }
+      })
+    : persons;
 
   return (
     <div>
-      <p>Find contries</p>
-      <input value={inputValue} onChange={onHandleInput} />
-      {filteredCountries.length > 10 && !showCountryToggle && (
-        <p>Too many countries, specify another filter.</p>
-      )}
-      {filteredCountries.length <= 10 &&
-        filteredCountries.length > 1 &&
-        !showCountryToggle &&
-        filteredCountries.map((country, index) => (
-          <div key={`${country.name.common}/${index}`}>
-            <p>{country.name.common}</p>{" "}
-            <Button label="show" onClick={() => onShowCountry(country)} />
-          </div>
-        ))}
-      {filteredCountries.length === 1 && !showCountryToggle && (
-        <div>
-          <Country country={filteredCountries[0]} />
-          <Weather coords={filteredCountries[0].latlng} />
-        </div>
-      )}
-      {showCountryToggle && !!toShowCountry && (
-        <div>
-          <Country country={toShowCountry} />
-          <Weather coords={toShowCountry.latlng} />
-        </div>
-      )}
+      <Header title={"Phonebook"} variant="h2" />
+      <Filter filterValue={filter} onFilter={onFilterChange} />
+      <Header title="Add new" variant="h2" />
+      <Form inputs={inputs} onSubmit={addPerson} />
+      <Header title="Numbers" variant="h2" />
+      <Persons persons={filteredPersons} />
     </div>
   );
 };
