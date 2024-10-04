@@ -43,6 +43,17 @@ app.get('/info', (req, res) => {
   res.end()
 })
 
+app.get('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+  const person = persons.find((p) => p.id === id)
+
+  if(!person) {
+    return res.status(404).send('<h2>Person not found</h2>')
+  }
+  
+  res.status(200).json(person)
+})
+
 const PORT = 3001
 
 app.listen(PORT,() =>{
