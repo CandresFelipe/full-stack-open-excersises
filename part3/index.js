@@ -1,3 +1,5 @@
+const requestLogger = require('./middleware')
+var morgan = require('morgan')
 const express = require('express')
 
 let persons = [
@@ -23,9 +25,21 @@ let persons = [
   }
 ]
 
+
+const morganMddware = morgan((tokens, req, res) => {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms'
+  ].join(' \n')
+})
+
 const app = express()
 
 app.use(express.json())
+app.use(morganMddware)
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!@!!</h1>')
@@ -92,6 +106,13 @@ app.post('/api/persons', (req, res) => {
     res.json(newPerson)
   
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+
+app.use(unknownEndpoint)
 
 const PORT = 3001
 
