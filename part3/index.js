@@ -25,16 +25,11 @@ let persons = [
   }
 ]
 
-
-const morganMddware = morgan((tokens, req, res) => {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms'
-  ].join(' \n')
+morgan.token('reqBody', (req, res) => {
+  return JSON.stringify(req.body)
 })
+
+const morganMddware = morgan(':method :url :status :res[content-length] - :response-time ms :reqBody')
 
 const app = express()
 
