@@ -25,6 +25,8 @@ let persons = [
 
 const app = express()
 
+app.use(express.json())
+
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!@!!</h1>')
 })
@@ -64,6 +66,25 @@ app.delete('/api/persons/:id', (req, res) => {
 
   res.status(204)
   res.end()
+})
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+
+  if(!(body.name || body.number)) {
+    return res.status(400).json({
+      error: 'Required fields are missing'
+    })
+  } 
+    const randomId = Math.floor(Math.random() * 1000)
+    const newPerson = {
+      id: randomId,
+      name: body.name,
+      number: String(body.number)
+    }
+    persons = persons.concat(newPerson)
+    res.json(newPerson)
+  
 })
 
 const PORT = 3001
