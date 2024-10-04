@@ -73,9 +73,15 @@ app.post('/api/persons', (req, res) => {
 
   if(!(body.name || body.number)) {
     return res.status(400).json({
-      error: 'Required fields are missing'
+      error: 'Required fields name and/or number are missing'
     })
   } 
+  const hasNameAlready = persons.some((p) => p.name.toLowerCase() === body.name.toLowerCase())
+  if(hasNameAlready) {
+    return res.status(400).json({
+      error: 'Name already existing in the registry'
+    })
+  }
     const randomId = Math.floor(Math.random() * 1000)
     const newPerson = {
       id: randomId,
