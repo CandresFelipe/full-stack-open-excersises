@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "nodemon --inspect index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:frontend": "rm -rf dist && cd ../part2 && npm run build && cp -r dist ../part3",
     "deploy": "npm run build:frontend && git add . && git commit -m uibuild && git push"
@@ -14,7 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.0"
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
   },
   "devDependencies": {
     "morgan": "^1.10.0",
