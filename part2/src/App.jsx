@@ -26,13 +26,15 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: Number(persons.length + 1),
     };
     if (!(newPerson.name && newPerson.number)) {
       window.alert("Inputs are not fully completed");
       return;
     }
-    setPersons(persons.concat(newPerson));
+    PersonService.createPerson(newPerson);
+    PersonService.getAllPersons().then((data) => {
+      setPersons((prev) => (prev !== data ? data : prev));
+    });
     setNewName("");
     setNewNumber("");
   };
@@ -63,7 +65,7 @@ const App = () => {
   ];
 
   const filteredPersons = filter
-    ? persons.filter((person) => {
+    ? persons?.filter((person) => {
         const descomposedName = person.name.toLowerCase().includes(filter);
         if (descomposedName) {
           return person;

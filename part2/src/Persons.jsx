@@ -4,7 +4,7 @@ export const Persons = ({ persons, onDelete }) => {
   return (
     <div>
       <ul>
-        {persons.map((person) => {
+        {persons?.map((person) => {
           return (
             <li key={person.id}>
               <p>
