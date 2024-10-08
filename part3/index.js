@@ -64,10 +64,10 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  Person.deleteOne({ id: id })
-
-  res.status(204)
-  res.end()
+  Person.deleteOne({ id: id }).then(() => {
+    res.status(204)
+    res.end()
+  })
 })
 
 app.post('/api/persons', (req, res) => {
