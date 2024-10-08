@@ -2,36 +2,19 @@ const cors = require('cors')
 var morgan = require('morgan')
 const express = require('express')
 const mongoose = require('mongoose')
-const crypto = require('crypto')
+const Person = require('./src/models/persons')
+
 const dotenv = require('dotenv')
 const path = require('path')
 
 dotenv.config({path: path.resolve(__dirname, '.env')})
 
 const uri = process.env.MONGO_URI
-const password = process.env.MONGO_PASSWORD
 
-console.log('uri', uri)
+mongoose.connect(uri).then((res) => {
+  console.log('connected to MongoDB')
+}).catch((err) => console.log('Connection Error', err))
 
-mongoose.set('strictQuery', false)
-
-mongoose.connect(uri)
-
-const phonebookSchema = mongoose.Schema({
-    id: String,
-    name: String,
-    number: String
-})
-
-phonebookSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    delete returnedObject._id
-    delete returnedObject.__v
-    return returnedObject
-  }
-} )
-
-const Person = mongoose.model('Phonebook', phonebookSchema)
 
 morgan.token('reqBody', (req, res) => {
   return JSON.stringify(req.body)
@@ -44,7 +27,6 @@ const app = express()
 app.use(express.json())
 app.use(morganMddware)
 app.use(cors())
-app.use(express.static('dist'))
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!@!!</h1>')
@@ -99,21 +81,20 @@ app.post('/api/persons', (req, res) => {
       error: 'Required fields name and/or number are missing'
     })
   } 
-  const hasNameAlready = persons.some((p) => p.name.toLowerCase() === body.name.toLowerCase())
-  if(hasNameAlready) {
-    return res.status(400).json({
-      error: 'Name already existing in the registry'
-    })
-  }
+  Person.find({ name: body.name }).then((result) => {
+    if(result.name === body.name) {
+      return res.status(400).send({error: 'Name already exists!'})
+    }
+  })
+
     const randomId = Math.floor(Math.random() * 1000)
-    const newPerson = {
+    const newPerson = new Person({
       id: randomId,
       name: body.name,
       number: String(body.number)
-    }
-    persons = persons.concat(newPerson)
-    res.json(newPerson)
-  
+    })
+
+    newPerson.save().then(() => console.log('Person added!')).catch((err) => console.log('Error in saving the entry', err))
 })
 
 const unknownEndpoint = (request, response) => {
