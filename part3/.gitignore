@@ -1,2 +1,3 @@
 // ignored files path
 node_modules
+.env

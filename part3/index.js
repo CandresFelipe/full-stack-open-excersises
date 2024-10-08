@@ -1,29 +1,37 @@
 const cors = require('cors')
 var morgan = require('morgan')
 const express = require('express')
+const mongoose = require('mongoose')
+const crypto = require('crypto')
+const dotenv = require('dotenv')
+const path = require('path')
 
-let persons = [
-  { 
-    "id": "1",
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": "2",
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": "3",
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": "4",
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
+dotenv.config({path: path.resolve(__dirname, '.env')})
+
+const uri = process.env.MONGO_URI
+const password = process.env.MONGO_PASSWORD
+
+console.log('uri', uri)
+
+mongoose.set('strictQuery', false)
+
+mongoose.connect(uri)
+
+const phonebookSchema = mongoose.Schema({
+    id: String,
+    name: String,
+    number: String
+})
+
+phonebookSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    delete returnedObject._id
+    delete returnedObject.__v
+    return returnedObject
   }
-]
+} )
+
+const Person = mongoose.model('Phonebook', phonebookSchema)
 
 morgan.token('reqBody', (req, res) => {
   return JSON.stringify(req.body)
@@ -43,7 +51,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons',(req, res) => {
-    res.json(persons)
+    Person.find({}).then((result) => {
+      [result].forEach(element => {
+          res.json(element)        
+      });
+    })
 })
 
 app.get('/info', (req, res) => {
