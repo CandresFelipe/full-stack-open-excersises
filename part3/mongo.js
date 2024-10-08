@@ -21,7 +21,7 @@ const phonebookSchema = mongoose.Schema({
     number: String
 })
 
-const Phonebook = mongoose.model('phonebook', phonebookSchema)
+const Person = mongoose.model('Person', phonebookSchema)
 
 async function stablishDBConnection() {
     if(mongoose.connection.readyState === 0) {
@@ -34,7 +34,7 @@ function addPerson(data) {
     const {name, number} = data
     const id = crypto.randomUUID()
 
-        const person = new Phonebook({
+        const person = new Person({
             id,
             name,
             number
