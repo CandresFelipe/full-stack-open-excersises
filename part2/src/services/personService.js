@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const URL = '/persons'
+const URL = '/api/persons'
 
 function getAllPersons() {
     return axios.get(URL).then(res => res.data)
