@@ -51,6 +51,11 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  const onDelete = (id) => {
+    PersonService.deletePerson(id);
+    PersonService.getAllPersons().then((data) => setPersons(data));
+  };
+
   const inputs = [
     {
       label: "Name",
@@ -80,7 +85,7 @@ const App = () => {
       <Header title="Add new" variant="h2" />
       <Form inputs={inputs} onSubmit={addPerson} />
       <Header title="Numbers" variant="h2" />
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} onDelete={onDelete} />
     </div>
   );
 };

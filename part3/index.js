@@ -64,11 +64,7 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  const toDeletePerson = persons.find((p) => p.id === id)
-  if(!toDeletePerson) {
-    return res.sendStatus(404)
-  }
-  persons = persons.filter((p) => p.id !== id)
+  Person.deleteOne({ id: id })
 
   res.status(204)
   res.end()
@@ -108,5 +104,7 @@ app.use(unknownEndpoint)
 const PORT = process.env.PORT || 3001
 
 app.listen(PORT,() =>{
+    const publicUrl = process.env.RENDER_EXTERNAL_URL;
+    console.log('Backend URL', publicUrl)
     console.log(`Server running on port ${PORT}`)
 })
