@@ -3,6 +3,7 @@ var morgan = require('morgan')
 const express = require('express')
 const mongoose = require('mongoose')
 const Person = require('./src/models/persons')
+const crypto = require('node:crypto')
 
 const dotenv = require('dotenv')
 const path = require('path')
@@ -20,6 +21,15 @@ morgan.token('reqBody', (req, res) => {
   return JSON.stringify(req.body)
 })
 
+const errorHandler = (error, req, res, next) => {
+  console.error('Error middleware log:',error.message)
+  if(error.name == 'CastError') {
+    return res.status(400).send({error: 'malformatted id'})
+  }
+
+  next(error)
+}
+
 const morganMddware = morgan(':method :url :status :res[content-length] - :response-time ms :reqBody')
 
 const app = express()
@@ -27,7 +37,6 @@ const app = express()
 app.use(express.json())
 app.use(morganMddware)
 app.use(cors())
-app.use(express.static('dist'))
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!@!!</h1>')
@@ -51,23 +60,22 @@ app.get('/info', (req, res) => {
   res.end()
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', async (req, res, next) => {
   const id = req.params.id
-  const person = persons.find((p) => p.id === id)
-
-  if(!person) {
-    return res.status(404).send('<h2>Person not found</h2>')
-  }
-  
-  res.status(200).json(person)
+  Person.findOne({id}).then((p) => {
+    if(!p) {
+      res.status(404).send('<h2>Person not found</h2>').end()
+    }
+    res.json(p).end()
+  }).catch((err) => next(err))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   const id = req.params.id
   Person.deleteOne({ id: id }).then(() => {
     res.status(204)
     res.end()
-  })
+  }).catch((err) => next(err))
 })
 
 app.post('/api/persons', (req, res) => {
@@ -84,14 +92,26 @@ app.post('/api/persons', (req, res) => {
     }
   })
 
-    const randomId = Math.floor(Math.random() * 1000)
+    const randomId = crypto.randomUUID()
     const newPerson = new Person({
       id: randomId,
       name: body.name,
-      number: String(body.number)
+      number: body.number
     })
 
     newPerson.save().then(() => console.log('Person added!')).catch((err) => console.log('Error in saving the entry', err))
+})
+
+app.put('/api/persons', (req, res, next) => {
+  const body = req.body
+  if(!(body.name || body.number)) {
+    return res.status(400).json({
+      error: 'Required fields name and/or number are missing'
+    })
+  } 
+  Person.updateOne({name: body.name}, {name: body.name, number: body.number}).then((p) => {
+    res.json(p)
+  }).catch(err => next(err))
 })
 
 const unknownEndpoint = (request, response) => {
@@ -100,6 +120,7 @@ const unknownEndpoint = (request, response) => {
 
 
 app.use(unknownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 

@@ -19,8 +19,15 @@ const App = () => {
     event.preventDefault();
 
     if (persons.some((person) => person.name === newName)) {
-      window.alert(`Person with name ${newName} already was added.`);
+      PersonService.updatePerson({ name: newName, number: newNumber }).then(
+        () =>
+          PersonService.getAllPersons().then((data) =>
+            setPersons((oldData) => (oldData !== data ? data : oldData))
+          )
+      );
+
       setNewName("");
+      setNewNumber("");
       return;
     }
     const newPerson = {

@@ -1,13 +1,15 @@
 import axios from "axios"
 
-const URL = '/api/persons'
+const PROD_URL='api/persons'
+const BASE_URL = import.meta.env.VITE_LOCAL_URL
+const URL = `${BASE_URL}/${PROD_URL}`
 
 function getAllPersons() {
     return axios.get(URL).then(res => res.data)
 }
 
 function updatePerson(person) {
-    return axios.put(`${URL}/${person.id}`, person).then(res => res.data)
+    return axios.put(`${URL}`, person).then(res => res.data)
 }
 
 function createPerson(person) {
