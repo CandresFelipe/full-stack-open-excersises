@@ -50,25 +50,21 @@ const App = () => {
       window.alert("Inputs are not fully completed");
       return;
     }
-    PersonService.createPerson(newPerson)
-      .then(
-        (data) =>
-          setNotification({
-            type: "success",
-            message: `Person with ${data.name} added successfully!`,
-          }),
-        PersonService.getAllPersons().then((data) => {
-          setPersons((prev) => (prev !== data ? data : prev));
-        }),
-        setNewName(""),
-        setNewNumber("")
-      )
-      .catch((err) => {
-        setNotification({
-          type: "error",
-          message: err.response.data.error,
-        });
+    PersonService.createPerson(newPerson).catch((err) => {
+      setNotification({
+        type: "error",
+        message: err.response.data.error,
       });
+    });
+    PersonService.getAllPersons().then((data) => {
+      setNotification({
+        type: "success",
+        message: `Person with ${newPerson.name} added successfully!`,
+      });
+      setPersons((prev) => (prev !== data ? data : prev));
+    }),
+      setNewName("");
+    setNewNumber("");
   };
 
   const onNameInputChange = (event) => {
@@ -85,7 +81,9 @@ const App = () => {
 
   const onDelete = (id) => {
     PersonService.deletePerson(id);
-    PersonService.getAllPersons().then((data) => setPersons(data));
+    PersonService.getAllPersons().then((data) =>
+      setPersons((oldData) => (oldData !== data ? data : oldData))
+    );
   };
 
   const inputs = [
