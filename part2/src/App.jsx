@@ -3,13 +3,19 @@ import { Header } from "./components/Header";
 import { Filter } from "./components/Filter";
 import { Form } from "./components/Form";
 import PersonService from "./services/personService";
+import { Notification } from "./components/Notification";
 import { Persons } from "./Persons";
+import "./styles.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState({
+    type: undefined,
+    message: undefined,
+  });
 
   useEffect(() => {
     PersonService.getAllPersons().then((data) => setPersons(data));
@@ -19,12 +25,18 @@ const App = () => {
     event.preventDefault();
 
     if (persons.some((person) => person.name === newName)) {
-      PersonService.updatePerson({ name: newName, number: newNumber }).then(
-        () =>
+      PersonService.updatePerson({ name: newName, number: newNumber })
+        .then(() =>
           PersonService.getAllPersons().then((data) =>
             setPersons((oldData) => (oldData !== data ? data : oldData))
           )
-      );
+        )
+        .catch((err) =>
+          setNotification({
+            type: "error",
+            message: err.response.data.error,
+          })
+        );
 
       setNewName("");
       setNewNumber("");
@@ -38,12 +50,25 @@ const App = () => {
       window.alert("Inputs are not fully completed");
       return;
     }
-    PersonService.createPerson(newPerson);
-    PersonService.getAllPersons().then((data) => {
-      setPersons((prev) => (prev !== data ? data : prev));
-    });
-    setNewName("");
-    setNewNumber("");
+    PersonService.createPerson(newPerson)
+      .then(
+        (data) =>
+          setNotification({
+            type: "success",
+            message: `Person with ${data.name} added successfully!`,
+          }),
+        PersonService.getAllPersons().then((data) => {
+          setPersons((prev) => (prev !== data ? data : prev));
+        }),
+        setNewName(""),
+        setNewNumber("")
+      )
+      .catch((err) => {
+        setNotification({
+          type: "error",
+          message: err.response.data.error,
+        });
+      });
   };
 
   const onNameInputChange = (event) => {
@@ -88,6 +113,7 @@ const App = () => {
   return (
     <div>
       <Header title={"Phonebook"} variant="h2" />
+      <Notification messsage={notification.message} type={notification.type} />
       <Filter filterValue={filter} onFilter={onFilterChange} />
       <Header title="Add new" variant="h2" />
       <Form inputs={inputs} onSubmit={addPerson} />

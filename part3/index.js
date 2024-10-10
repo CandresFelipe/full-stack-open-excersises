@@ -23,8 +23,10 @@ morgan.token('reqBody', (req, res) => {
 
 const errorHandler = (error, req, res, next) => {
   console.error('Error middleware log:',error.message)
-  if(error.name == 'CastError') {
+  if(error.name === 'CastError') {
     return res.status(400).send({error: 'malformatted id'})
+  }else if(error.name === 'ValidationError' ) {
+    return res.status(400).send({error: error.message})
   }
 
   next(error)
@@ -37,6 +39,7 @@ const app = express()
 app.use(express.json())
 app.use(morganMddware)
 app.use(cors())
+app.use(express.static('dist'))
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!@!!</h1>')
@@ -78,20 +81,14 @@ app.delete('/api/persons/:id', (req, res, next) => {
   }).catch((err) => next(err))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body
 
   if(!(body.name || body.number)) {
     return res.status(400).json({
       error: 'Required fields name and/or number are missing'
     })
-  } 
-  Person.find({ name: body.name }).then((result) => {
-    if(result.name === body.name) {
-      return res.status(400).send({error: 'Name already exists!'})
-    }
-  })
-
+  }
     const randomId = crypto.randomUUID()
     const newPerson = new Person({
       id: randomId,
@@ -99,7 +96,7 @@ app.post('/api/persons', (req, res) => {
       number: body.number
     })
 
-    newPerson.save().then(() => console.log('Person added!')).catch((err) => console.log('Error in saving the entry', err))
+    newPerson.save().then(() => console.log('Person added!')).catch((err) => next(err))
 })
 
 app.put('/api/persons', (req, res, next) => {
@@ -109,7 +106,9 @@ app.put('/api/persons', (req, res, next) => {
       error: 'Required fields name and/or number are missing'
     })
   } 
-  Person.updateOne({name: body.name}, {name: body.name, number: body.number}).then((p) => {
+  Person.updateOne({name: body.name}, {name: body.name, number: body.number}, {
+    runValidators: true,  context: 'query'
+  }).then((p) => {
     res.json(p)
   }).catch(err => next(err))
 })

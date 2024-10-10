@@ -1,5 +1,5 @@
 export const Notification = ({ messsage, type }) => {
-  if (messsage === null) {
+  if (!messsage && !type) {
     return null;
   }
 
