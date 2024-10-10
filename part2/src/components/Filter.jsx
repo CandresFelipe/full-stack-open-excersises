@@ -3,5 +3,5 @@ export const Filter = ({ filterValue, onFilter }) => {
     <div>
       Filter shown with: <input value={filterValue} onChange={onFilter} />
     </div>
-  );
-};
+  )
+}

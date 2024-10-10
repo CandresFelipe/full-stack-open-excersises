@@ -1,4 +1,4 @@
-import { Button } from "./components/Button";
+import { Button } from './components/Button'
 
 export const Persons = ({ persons, onDelete }) => {
   return (
@@ -8,13 +8,13 @@ export const Persons = ({ persons, onDelete }) => {
           return (
             <li key={person.id}>
               <p>
-                {person.name} {person.number}{" "}
+                {person.name} {person.number}{' '}
                 <Button label="delete" onClick={() => onDelete(person.id)} />
               </p>
             </li>
-          );
+          )
         })}
       </ul>
     </div>
-  );
-};
+  )
+}

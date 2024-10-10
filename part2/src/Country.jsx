@@ -1,5 +1,5 @@
 export const Country = ({ country }) => {
-  console.log(country.flags);
+  console.log(country.flags)
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -13,5 +13,5 @@ export const Country = ({ country }) => {
       </ul>
       <img alt={country.alt} src={country.flags.png} />
     </div>
-  );
-};
+  )
+}
