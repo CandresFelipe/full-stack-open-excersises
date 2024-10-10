@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const PROD_URL='api/persons'
-const BASE_URL = import.meta.env.VITE_LOCAL_URL
+//const BASE_URL = import.meta.env.VITE_LOCAL_URL
 const URL = PROD_URL
 
 function getAllPersons() {
