@@ -1,0 +1,11 @@
+{
+  "name": "part4",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "author": "Andres Carrera",
+  "license": "MIT",
+  "description": ""
+}
