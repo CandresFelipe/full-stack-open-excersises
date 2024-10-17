@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const dummy = (blogs) => {
     if(blogs) return 1
   }
@@ -28,65 +30,35 @@ const findFavoriteBlog = (blogs) => {
 const mostBlogs = (blogs) => {
     if(!blogs || blogs.length === 0) return null
 
-    const authorCounts = {}
+    const blogsByAuthor = _.groupBy(blogs, blog => blog.author);
 
-    blogs.forEach((blog) => {
-       const author = blog.author.toLowerCase()
+    const blogCounts = _.mapValues(blogsByAuthor, author => author.length)
 
-       if(authorCounts[author]) {
-            authorCounts[author]+= 1
-       } else {
-            authorCounts[author] = 1
-       }
-    })
+  // Find the author with the most blogs
+  const bestAuthor = _.maxBy(Object.keys(blogCounts), author => blogCounts[author]);
 
-    let bestAuthor = {
-        author: blogs[0].author,
-        blogs: authorCounts[blogs[0].author.toLowerCase()]
-    }
-
-    for (let author in authorCounts) {
-        if(authorCounts[author] > bestAuthor.blogs) {
-            bestAuthor = {
-                author,
-                blogs: authorCounts[author]
-            }
-        }
-    }
-
-    return bestAuthor
+  return {
+    author: bestAuthor,
+    blogs: blogCounts[bestAuthor]
+  };
 }
 
 const mostLikes = (blogs) => {
     if(!blogs || blogs.length === 0) return null
 
-    const authorLikesCounts = {}
+    const groupedByAuthor = _.groupBy(blogs, blogs => blogs.author)
 
-    blogs.forEach((blogs) => {
-        const author = blogs.author.toLowerCase()
-        const likes = blogs.likes
-        if(authorLikesCounts[author]) {
-            authorLikesCounts[author] = authorLikesCounts[author] + likes
-        }else {
-            authorLikesCounts[author] = likes
-        }
+    const likesCountByAuthor = _.mapValues(groupedByAuthor, (author) => {
+        const likesAcc = author.reduce((acc, blog) => acc + blog.likes, 0)
+        return likesAcc
     })
 
-    const authorWithMostLikes = {
-        author: blogs[0].author,
-        likes: authorLikesCounts[blogs[0].author.toLowerCase()]
-    }
+    const mostLikesAuthor = _.maxBy(Object.keys(likesCountByAuthor), (author) => likesCountByAuthor[author])
 
-    for(let author in authorLikesCounts) {
-        if(authorLikesCounts[author] > blogs.likes) {
-            authorWithMostLikes = {
-                author,
-                likes: authorLikesCounts[author]
-            }
-        }
+    return {
+        author: mostLikesAuthor,
+        likes: likesCountByAuthor[mostLikesAuthor]
     }
-
-    return authorWithMostLikes
 }
 
 module.exports = {
