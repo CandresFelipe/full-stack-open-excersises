@@ -3,13 +3,14 @@ const app = express()
 const cors = require('cors')
 const config = require('./src/utils/config')
 const blogRouter = require('./src/controller/blogs')
+const logger = require('./src/utils/middlewares')
 const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 mongoose.connect(config.MONGO_URI, {
-    serverSelectionTimeoutMS: 100000,
+    serverSelectionTimeoutMS: 10000,
 }).then(() => 
-console.log('Connected to DB')).catch((error) => console.log('error trying to connect to BD', error))
+logger.info('Connected to DB')).catch((error) => logger.error('error trying to connect to BD', error))
 
 app.use(cors())
 app.use(express.json())

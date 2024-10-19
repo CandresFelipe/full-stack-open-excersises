@@ -1,11 +1,11 @@
 const _ = require('lodash')
+const Blog = require('../models/blog')
+const logger = require('../utils/middlewares')
 
 const dummy = (blogs) => {
     if(blogs) return 1
   }
   
-
-
 const totalLikes = (blogs) => {
     if(!blogs) return 0
 
@@ -61,10 +61,52 @@ const mostLikes = (blogs) => {
     }
 }
 
+const mockedBlogs = [
+    {
+      "title": "JavaScript Promises: An Introduction",
+      "author": "Kyle Simpson",
+      "url": "https://example.com/js-promises-intro",
+      "likes": 12,
+    },
+    {
+      "title": "Mastering React Components",
+      "author": "Dan Abramov",
+      "url": "https://example.com/mastering-react-components",
+      "likes": 30,
+    },
+    {
+      "title": "Understanding Asynchronous JavaScript",
+      "author": "Kyle Simpson",
+      "url": "https://example.com/understanding-async-js",
+      "likes": 20,
+    }
+  ]
+  
+const blogsInDb = async () => {
+    const blogs = await Blog.find({})
+    return blogs.map((blog) => blog.toJSON())
+}
+
+const getBlogByProperty = async (property) => {
+  if(!property) return undefined
+
+  const key = Object.keys(property)[0]
+  
+  if(!(key in Blog.schema.paths) ) {
+    logger.error(`[ERROR]: property not defined in schema`)
+    return
+  }
+  const blog = await Blog.findOne(property)
+  return blog.toJSON()
+}
+
 module.exports = {
     dummy,
     totalLikes,
     findFavoriteBlog,
     mostBlogs,
-    mostLikes
+    mostLikes,
+    mockedBlogs,
+    blogsInDb,
+    getBlogByProperty
   }
