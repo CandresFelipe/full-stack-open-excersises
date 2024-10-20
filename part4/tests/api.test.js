@@ -2,6 +2,7 @@ const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const _ = require('lodash')
 
 const app = require('../app')
 const helpers = require('../src/utils/list_helpers')
@@ -9,16 +10,17 @@ const Blog = require('../src/models/blog')
 
 const api = supertest(app)
 
-beforeEach(async () => {
-    await Blog.deleteMany({})
-
-    const blogsObjects = helpers.mockedBlogs.map((blog) => new Blog(blog))
-    const blogsArray = blogsObjects.map((blog) => blog.save())
-    
-    await Promise.all(blogsArray)
-})
- 
 describe('API HTTP request for /api/blogs path', () => {
+
+    beforeEach(async () => {
+        await Blog.deleteMany({})
+    
+        const blogsObjects = helpers.mockedBlogs.map((blog) => new Blog(blog))
+        const blogsArray = blogsObjects.map((blog) => blog.save())
+        
+        await Promise.all(blogsArray)
+    })
+
     test('GET the blog list as json', async () => {
         await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
 
@@ -91,6 +93,51 @@ describe('API HTTP request for /api/blogs path', () => {
         const blogs2 = await helpers.blogsInDb()
         assert.strictEqual(blogs2.length, helpers.mockedBlogs.length)
     })
+})
+
+test('DELETE a blog successfully', async () => {
+    const blogsAtStart = await helpers.blogsInDb()
+    const blogId = blogsAtStart[0].id
+
+    await api.delete(`/api/blogs/${blogId}`).expect(204)
+    
+    const blogsAtEnd = await helpers.blogsInDb()
+
+    assert.strictEqual(blogsAtEnd.length, helpers.mockedBlogs.length - 1)
+})
+
+test('Return 400 when the id is invalid', async () => {
+    const id ='q322222222'
+
+    await api.get(`/api/blogs/${id}`).expect(400)
+})
+
+test('GET Return 200 and the blog that maches the id', async () => {
+    const blogs = await helpers.blogsInDb()
+
+    const blogId = blogs[1].id
+
+    const response = await api.get(`/api/blogs/${blogId}`).expect(200).expect('Content-Type', /application\/json/)
+
+    assert.deepStrictEqual(response.body, blogs[1])
+
+})
+
+test('UPDATE likes of the first blog', async () => {
+    const blogs = await helpers.blogsInDb()
+
+    const firstBlog = blogs[0]
+
+    const newBlog = {
+        ...firstBlog,
+        likes: 100
+    }
+
+    const response = await api.put(`/api/blogs/${firstBlog.id}`).send(newBlog).expect(200).expect('Content-Type', /application\/json/)
+
+    assert.deepStrictEqual(response.body.likes, 100)
+    assert.notDeepEqual(blogs[0], response.body)
+
 })
 
 after(async () => {

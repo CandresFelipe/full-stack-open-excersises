@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-
 const BlogSchema = new mongoose.Schema({
     title: String,
     author: String,
@@ -12,7 +11,7 @@ BlogSchema.set('toJSON', {
     transform: (doc, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
-        delete returnedObject._v
+        delete returnedObject.__v
     }
 })
 
