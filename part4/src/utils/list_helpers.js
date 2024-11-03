@@ -126,8 +126,14 @@ const getSpecificUserById = async (id) => {
   return user
 }
 
-const decodeToken = (token) => {
-  return jwt.verify(token, process.env.SECRET)
+const userExtractor = async (req, res, next) => {
+  const token = req.token;
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  const user = await User.findById(decodedToken.userId)
+  if(user) {
+    req.user = user
+  }
+  next()
 }
 
 module.exports = {
@@ -143,5 +149,5 @@ module.exports = {
     tokenExtractor,
     getRandomUser,
     getSpecificUserById,
-    decodeToken
+    userExtractor
   }

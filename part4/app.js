@@ -19,7 +19,7 @@ app.use(cors())
 app.use(express.json())
 app.use(helpers.tokenExtractor)
 
-app.use('/api/blogs', blogRouter)
+app.use('/api/blogs',helpers.userExtractor, blogRouter)
 app.use('/api/user', userRouter)
 app.use('/api/user', loginRouter)
 

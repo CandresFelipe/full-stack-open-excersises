@@ -24,9 +24,7 @@ blogRouter.post('/create', async (request, response, next) => {
     }
 
     try {
-      const decodedToken = jwt.verify(request.token, process.env.SECRET)
-      const user  = await getSpecificUserById(decodedToken.userId)
-  
+      const user = request.user
       const blog = new Blog({
         ...body,
         user: user.id
@@ -48,11 +46,8 @@ blogRouter.delete('/:id', async (request, response, next) => {
   const id = request.params.id
 
   try {
-    const decodedToken = decodeToken(request.token)
-    const user = await User.findById(decodedToken.userId)
-    if (!user) {
-      return response.status(404).json({ error: 'User not found' })
-    }
+    const user = request.user
+    
     const blog = await Blog.findById(id)
 
     if(user.id.toString() !== blog.user.id.toString()) {
