@@ -3,7 +3,7 @@ const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const { getRandomUser, getSpecificUserById } = require('../utils/list_helpers')
+const { getRandomUser, getSpecificUserById, decodeToken } = require('../utils/list_helpers')
 
 blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {blogs: 0})
@@ -44,11 +44,26 @@ blogRouter.post('/create', async (request, response, next) => {
  
   })
 
-blogRouter.delete('/:id', async (request, response) => {
+blogRouter.delete('/:id', async (request, response, next) => {
   const id = request.params.id
 
-  await Blog.findByIdAndDelete({ _id: id })
-  response.sendStatus(204)
+  try {
+    const decodedToken = decodeToken(request.token)
+    const user = await User.findById(decodedToken.userId)
+    if (!user) {
+      return response.status(404).json({ error: 'User not found' })
+    }
+    const blog = await Blog.findById(id)
+
+    if(user.id.toString() !== blog.user.id.toString()) {
+      return response.status(403).json({error: 'Forbiden action, user not valid for performing such action'})
+    }
+
+    await Blog.findByIdAndDelete(id)  
+    response.sendStatus(204)
+  } catch(err) {
+    next(err)
+  }
 })
 
   blogRouter.get('/:id', async (request, response) => {

@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Blog = require('../models/blog')
 const logger = require('../utils/middlewares')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 const dummy = (blogs) => {
     if(blogs) return 1
@@ -125,6 +126,10 @@ const getSpecificUserById = async (id) => {
   return user
 }
 
+const decodeToken = (token) => {
+  return jwt.verify(token, process.env.SECRET)
+}
+
 module.exports = {
     dummy,
     totalLikes,
@@ -137,5 +142,6 @@ module.exports = {
     getBlogByProperty,
     tokenExtractor,
     getRandomUser,
-    getSpecificUserById
+    getSpecificUserById,
+    decodeToken
   }
