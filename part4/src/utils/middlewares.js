@@ -15,13 +15,14 @@ const errorHandler = (error, req, res, next) => {
     if(error.name === 'CastError') {
       return res.status(400).send({ error: 'malformatted id' })
     }else if(error.name === 'ValidationError' ) {
-      console.log('error heree')
       return res.status(400).send({ error: error.message })
     }else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
-        return response.status(400).json({ error: 'expected `username` to be unique' })
+        return res.status(400).json({ error: 'expected `username` to be unique' })
     }else if (error.name ===  'JsonWebTokenError') {
-        return response.status(401).json({ error: 'token invalid' })
-      }    
+        return res.status(401).json({ error: 'token invalid' })
+      }else if(error.message === 'PasswordLengthError') {
+        return res.status(401).json({error: `Password is too short, minimun is (3) but you typed (${req.body.password.length}) char`})
+      }
   
     next(error)
   }

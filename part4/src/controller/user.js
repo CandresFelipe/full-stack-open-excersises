@@ -4,16 +4,21 @@ const bcrypt = require('bcrypt')
 
 userRouter.post('/sign-up', async (request, response, next) => {
     const {userName, name, password } = request.body
-    
-    const saltRounds = 10
+
     try {
+
+        if(password.length <= 3) {
+            throw Error('PasswordLengthError')
+        }
+
+        const saltRounds = 10
         const passwordHash = await bcrypt.hash(password, saltRounds)
     const user = new User({
-        name,
         userName,
+        name,
         passwordHash
     })
-
+    
     const savedUser = await user.save()
 
     response.status(201).send(savedUser)

@@ -4,7 +4,9 @@ const _userSchema = {
     userName: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        minLength: 3,
+        message: 'Username should contain more than 3 char'
     },
     name: {
         type: String, 
@@ -13,7 +15,9 @@ const _userSchema = {
     },
     passwordHash: {
         type: String,
-        required: true
+        required: true,
+        minLength: 3,
+        message: 'Password should contain more than 3 char'
     },
 }
 
