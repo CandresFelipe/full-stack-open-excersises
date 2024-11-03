@@ -2,6 +2,8 @@ const blogRouter = require('express').Router()
 const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+const { getTokenFrom } = require('../utils/list_helpers')
 
 blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
@@ -10,6 +12,10 @@ blogRouter.get('/', async (request, response) => {
   
 blogRouter.post('/', async (request, response) => {
     const body = request.body
+
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+
+    const user = User.findById(decodedToken.id)
 
     if(!body.title || !body.url) {
       return response.status(400).json({
@@ -20,10 +26,6 @@ blogRouter.post('/', async (request, response) => {
     if(!body['likes']) {
       body.likes = 0
     }
-
-    const user = await User.findById(body.userId)
-
-    console.log('user', user)
 
     const blog = new Blog({
       ...body,

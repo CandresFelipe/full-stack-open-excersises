@@ -6,14 +6,15 @@ const _userSchema = {
         required: true,
         unique: true
     },
-    name: String,
-    passwordHash: String,
-    notes: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Blog'
-        }
-    ]
+    name: {
+        type: String, 
+        required: true,
+        unique: true
+    },
+    passwordHash: {
+        type: String,
+        required: true
+    },
 }
 
 const userSchema = new mongoose.Schema(_userSchema)

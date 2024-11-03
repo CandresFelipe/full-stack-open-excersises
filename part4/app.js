@@ -6,6 +6,7 @@ const blogRouter = require('./src/controller/blogs')
 const logger = require('./src/utils/middlewares')
 const mongoose = require('mongoose')
 const userRouter = require('./src/controller/user')
+const loginRouter = require('./src/controller/login')
 
 mongoose.set('strictQuery', false)
 mongoose.connect(config.MONGO_URI, {
@@ -18,6 +19,7 @@ app.use(express.json())
 
 app.use('/api/blogs', blogRouter)
 app.use('/api/user', userRouter)
+app.use('/api/user', loginRouter)
 
 app.use(logger.errorHandler)
 

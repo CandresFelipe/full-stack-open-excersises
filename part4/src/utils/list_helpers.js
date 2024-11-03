@@ -106,6 +106,13 @@ const getBlogByProperty = async (property) => {
   return blog.toJSON()
 }
 
+const getTokenFrom = (req) => {
+  const authorization = req.get('Authorization')
+  if(authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+}
+
 module.exports = {
     dummy,
     totalLikes,
@@ -115,5 +122,6 @@ module.exports = {
     mockedBlogs,
     blogsInDb,
     usersInDb,
-    getBlogByProperty
+    getBlogByProperty,
+    getTokenFrom
   }
