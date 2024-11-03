@@ -18,7 +18,7 @@ userRouter.post('/sign-up', async (request, response, next) => {
         name,
         passwordHash
     })
-    
+
     const savedUser = await user.save()
 
     response.status(201).send(savedUser)
@@ -29,7 +29,7 @@ userRouter.post('/sign-up', async (request, response, next) => {
 
 userRouter.get('/', async (request, response) => {
 
-    const users = await User.find({})
+    const users = await User.find({}).populate('blogs', {user: 0})
 
     response.status(200).json(users)
 })

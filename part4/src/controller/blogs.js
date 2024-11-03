@@ -3,23 +3,19 @@ const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const { getTokenFrom } = require('../utils/list_helpers')
+const { getTokenFrom, getRandomUser } = require('../utils/list_helpers')
 
 blogRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user', {blogs: 0})
     response.json(blogs)
   })
   
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/create', async (request, response) => {
     const body = request.body
-
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-
-    const user = User.findById(decodedToken.id)
 
     if(!body.title || !body.url) {
       return response.status(400).json({
-        error: 'Required fields name and/or number are missing'
+        error: 'Required fields title and/or url are missing'
       })
     }
 
@@ -27,16 +23,17 @@ blogRouter.post('/', async (request, response) => {
       body.likes = 0
     }
 
+    const randomUser  = await getRandomUser()
+
     const blog = new Blog({
       ...body,
-      user: user.id
+      user: randomUser.id
     })
 
     const result = await blog.save()
-    user.notes = user.notes.concat(result.id)
+    randomUser.blogs = randomUser.blogs.concat(result.id)
 
-    console.log('user.notes', user.notes)
-    await user.save()
+    await randomUser.save()
 
     response.status(201).json(result)
   })
@@ -71,13 +68,16 @@ blogRouter.delete('/:id', async (request, response) => {
       return response.status(400).send({error: 'id is invalid'})
     }
 
+    const randomUser = await getRandomUser()
+
     const body = request.body
 
     const newBlog = {
       title: body.title,
       author: body.author,
       url: body.url,
-      likes: body.likes
+      likes: body.likes,
+      user: randomUser
     }
 
     const blog = await Blog.findByIdAndUpdate(id, newBlog, {new: true})

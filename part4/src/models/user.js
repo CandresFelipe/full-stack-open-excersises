@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, Mongoose } = require("mongoose");
 
 const _userSchema = {
     userName: {
@@ -19,6 +19,13 @@ const _userSchema = {
         minLength: 3,
         message: 'Password should contain more than 3 char'
     },
+
+    blogs: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Blog'
+        }
+    ]
 }
 
 const userSchema = new mongoose.Schema(_userSchema)

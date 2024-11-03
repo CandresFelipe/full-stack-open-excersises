@@ -113,6 +113,12 @@ const getTokenFrom = (req) => {
   }
 }
 
+const getRandomUser = async () => {
+  const allUsers = await User.find({})
+  const randomNumber = Math.floor(Math.random() * allUsers.length)
+  return allUsers[randomNumber]
+}
+
 module.exports = {
     dummy,
     totalLikes,
@@ -123,5 +129,6 @@ module.exports = {
     blogsInDb,
     usersInDb,
     getBlogByProperty,
-    getTokenFrom
+    getTokenFrom,
+    getRandomUser
   }
