@@ -7,6 +7,7 @@ const logger = require('./src/utils/middlewares')
 const mongoose = require('mongoose')
 const userRouter = require('./src/controller/user')
 const loginRouter = require('./src/controller/login')
+const helpers = require('./src/utils/list_helpers')
 
 mongoose.set('strictQuery', false)
 mongoose.connect(config.MONGO_URI, {
@@ -16,6 +17,7 @@ logger.info('Connected to DB')).catch((error) => logger.error('error trying to c
 
 app.use(cors())
 app.use(express.json())
+app.use(helpers.tokenExtractor)
 
 app.use('/api/blogs', blogRouter)
 app.use('/api/user', userRouter)

@@ -3,7 +3,7 @@ const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const { getTokenFrom, getRandomUser, getSpecificUserById } = require('../utils/list_helpers')
+const { getRandomUser, getSpecificUserById } = require('../utils/list_helpers')
 
 blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {blogs: 0})
@@ -22,8 +22,9 @@ blogRouter.post('/create', async (request, response, next) => {
     if(!body['likes']) {
       body.likes = 0
     }
+
     try {
-      const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+      const decodedToken = jwt.verify(request.token, process.env.SECRET)
       const user  = await getSpecificUserById(decodedToken.userId)
   
       const blog = new Blog({

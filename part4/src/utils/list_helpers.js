@@ -106,11 +106,12 @@ const getBlogByProperty = async (property) => {
   return blog.toJSON()
 }
 
-const getTokenFrom = (req) => {
+const tokenExtractor = (req, res, next) => {
   const authorization = req.get('authorization')
   if(authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
+    req.token = authorization.replace('Bearer ', '')
   }
+  next()
 }
 
 const getRandomUser = async () => {
@@ -134,7 +135,7 @@ module.exports = {
     blogsInDb,
     usersInDb,
     getBlogByProperty,
-    getTokenFrom,
+    tokenExtractor,
     getRandomUser,
     getSpecificUserById
   }
