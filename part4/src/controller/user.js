@@ -1,9 +1,11 @@
 const userRouter = require('express').Router()
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 userRouter.post('/sign-up', async (request, response, next) => {
     const {userName, name, password } = request.body
+
 
     try {
 
@@ -19,9 +21,12 @@ userRouter.post('/sign-up', async (request, response, next) => {
         passwordHash
     })
 
+
+    const jwtoken = jwt.sign({userName, userId: user.id}, process.env.SECRET)
+
     const savedUser = await user.save()
 
-    response.status(201).send(savedUser)
+    response.status(201).send({token: jwtoken, user: savedUser})
     }catch (err) {
         next(err)
     } 

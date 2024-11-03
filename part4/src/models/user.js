@@ -11,7 +11,6 @@ const _userSchema = {
     name: {
         type: String, 
         required: true,
-        unique: true
     },
     passwordHash: {
         type: String,

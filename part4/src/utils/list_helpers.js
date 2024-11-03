@@ -107,7 +107,7 @@ const getBlogByProperty = async (property) => {
 }
 
 const getTokenFrom = (req) => {
-  const authorization = req.get('Authorization')
+  const authorization = req.get('authorization')
   if(authorization && authorization.startsWith('Bearer ')) {
     return authorization.replace('Bearer ', '')
   }
@@ -117,6 +117,11 @@ const getRandomUser = async () => {
   const allUsers = await User.find({})
   const randomNumber = Math.floor(Math.random() * allUsers.length)
   return allUsers[randomNumber]
+}
+
+const getSpecificUserById = async (id) => {
+  const user = await User.findById(id)
+  return user
 }
 
 module.exports = {
@@ -130,5 +135,6 @@ module.exports = {
     usersInDb,
     getBlogByProperty,
     getTokenFrom,
-    getRandomUser
+    getRandomUser,
+    getSpecificUserById
   }

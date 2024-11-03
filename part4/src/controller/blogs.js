@@ -3,14 +3,14 @@ const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const { getTokenFrom, getRandomUser } = require('../utils/list_helpers')
+const { getTokenFrom, getRandomUser, getSpecificUserById } = require('../utils/list_helpers')
 
 blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {blogs: 0})
     response.json(blogs)
   })
   
-blogRouter.post('/create', async (request, response) => {
+blogRouter.post('/create', async (request, response, next) => {
     const body = request.body
 
     if(!body.title || !body.url) {
@@ -22,20 +22,25 @@ blogRouter.post('/create', async (request, response) => {
     if(!body['likes']) {
       body.likes = 0
     }
-
-    const randomUser  = await getRandomUser()
-
-    const blog = new Blog({
-      ...body,
-      user: randomUser.id
-    })
-
-    const result = await blog.save()
-    randomUser.blogs = randomUser.blogs.concat(result.id)
-
-    await randomUser.save()
-
-    response.status(201).json(result)
+    try {
+      const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+      const user  = await getSpecificUserById(decodedToken.userId)
+  
+      const blog = new Blog({
+        ...body,
+        user: user.id
+      })
+  
+      const result = await blog.save()
+      user.blogs = user.blogs.concat(result.id)
+  
+      await user.save()
+  
+      response.status(201).json(result)
+    }catch (err) {
+      next(err)
+    }
+ 
   })
 
 blogRouter.delete('/:id', async (request, response) => {
