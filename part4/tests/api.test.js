@@ -7,6 +7,8 @@ const _ = require('lodash')
 const app = require('../app')
 const helpers = require('../src/utils/list_helpers')
 const Blog = require('../src/models/blog')
+const User = require('../src/models/user')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
 
@@ -138,6 +140,36 @@ test('UPDATE likes of the first blog', async () => {
     assert.deepStrictEqual(response.body.likes, 100)
     assert.notDeepEqual(blogs[0], response.body)
 
+})
+
+describe('WHEN there is initially one', (request, response) => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new User({
+            userName: 'root',
+            passwordHash
+        })
+
+        await user.save()
+    })
+
+    test('Creation succeeds with a fresh user', async () => {
+        const userAtStart = await helpers.usersInDb()
+
+        const newUser = {
+            userName: 'StrickName',
+            name: 'Felix Strick',
+            password: 'secret01'
+        }
+
+        await api.post('/api/user/sign-up').send(newUser).expect(201).expect('Content-Type', /application\/json/)
+
+        const userAtEnd = await helpers.usersInDb()
+
+        assert.strictEqual(userAtEnd.length, userAtStart.length + 1)
+    })
 })
 
 after(async () => {

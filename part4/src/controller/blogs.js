@@ -1,6 +1,7 @@
 const blogRouter = require('express').Router()
 const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
@@ -20,9 +21,21 @@ blogRouter.post('/', async (request, response) => {
       body.likes = 0
     }
 
-    const blog = new Blog(request.body)
+    const user = await User.findById(body.userId)
+
+    console.log('user', user)
+
+    const blog = new Blog({
+      ...body,
+      user: user.id
+    })
 
     const result = await blog.save()
+    user.notes = user.notes.concat(result.id)
+
+    console.log('user.notes', user.notes)
+    await user.save()
+
     response.status(201).json(result)
   })
 

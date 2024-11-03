@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const Blog = require('../models/blog')
 const logger = require('../utils/middlewares')
+const User = require('../models/user')
 
 const dummy = (blogs) => {
     if(blogs) return 1
@@ -87,6 +88,11 @@ const blogsInDb = async () => {
     return blogs.map((blog) => blog.toJSON())
 }
 
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map((user) => user.toJSON())
+}
+
 const getBlogByProperty = async (property) => {
   if(!property) return undefined
 
@@ -108,5 +114,6 @@ module.exports = {
     mostLikes,
     mockedBlogs,
     blogsInDb,
+    usersInDb,
     getBlogByProperty
   }
