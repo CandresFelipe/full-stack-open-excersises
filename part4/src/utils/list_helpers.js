@@ -129,7 +129,7 @@ const getSpecificUserById = async (id) => {
 const userExtractor = async (req, res, next) => {
   const token = req.token;
   const decodedToken = jwt.verify(token, process.env.SECRET)
-  const user = await User.findById(decodedToken.userId)
+  const user = await User.findById(decodedToken.id)
   if(user) {
     req.user = user
   }

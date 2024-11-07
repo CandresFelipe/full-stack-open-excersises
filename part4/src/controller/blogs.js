@@ -1,13 +1,18 @@
 const blogRouter = require('express').Router()
 const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
+const { getRandomUser } = require('../utils/list_helpers')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
-const { getRandomUser, getSpecificUserById, decodeToken } = require('../utils/list_helpers')
 
-blogRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({}).populate('user', {blogs: 0})
-    response.json(blogs)
+blogRouter.get('/', async (request, response, next) => {
+    const userId = request.user.id
+    try {
+      const fetchedUser = await User.findOne({_id: userId}, {name: 1}).populate('blogs')
+    response.json(fetchedUser)
+    }catch(err) {
+      next(err)
+    }
+    
   })
   
 blogRouter.post('/create', async (request, response, next) => {
@@ -27,7 +32,7 @@ blogRouter.post('/create', async (request, response, next) => {
       const user = request.user
       const blog = new Blog({
         ...body,
-        user: user.id
+        user: user.userId
       })
   
       const result = await blog.save()
