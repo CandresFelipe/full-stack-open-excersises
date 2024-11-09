@@ -29,14 +29,15 @@ export const CreateBlog = ({ onNewBlogCreated }) => {
     },
   ];
 
-  const onCreateBlog = async () => {
+  const onCreateBlog = async (event) => {
+    event.preventDefault();
+
     try {
       const newBlog = await blogService.createBlog({
         title,
         author,
         url,
       });
-      console.log("newBlog", newBlog);
       onNewBlogCreated(newBlog);
       setAuthor("");
       setTitle("");

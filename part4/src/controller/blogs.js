@@ -39,8 +39,7 @@ blogRouter.post('/create', async (request, response, next) => {
       user.blogs = user.blogs.concat(result.id)
   
       await user.save()
-  
-      response.status(201).json(result)
+      response.status(201).json(result.toJSON())
     }catch (err) {
       next(err)
     }
