@@ -81,23 +81,25 @@ blogRouter.delete('/:id', async (request, response, next) => {
 
   })
 
-  blogRouter.put('/:id', async (request, response) => {
+  blogRouter.put('/:id', async (request, response, next) => {
     const id = request.params.id
+    
+    const user = request.user;
 
     if(!mongoose.Types.ObjectId.isValid(id)) {
+      console.log('this is happening ?')
       return response.status(400).send({error: 'id is invalid'})
     }
 
-    const randomUser = await getRandomUser()
-
+    try { 
     const body = request.body
-
+    
     const newBlog = {
       title: body.title,
       author: body.author,
       url: body.url,
       likes: body.likes,
-      user: randomUser
+      user
     }
 
     const blog = await Blog.findByIdAndUpdate(id, newBlog, {new: true})
@@ -105,6 +107,10 @@ blogRouter.delete('/:id', async (request, response, next) => {
       return response.status(404).send({error: 'Blog not found with such ID'})
     }
     response.json(blog.toJSON())
+    }catch(error) {
+      next(error)
+    }
+    
   })
 
 module.exports = blogRouter
