@@ -8,6 +8,7 @@ import { CreateBlog } from "./components/CreateBlog";
 import "./styles.css";
 import { Notification } from "./components/Notification";
 import { Toggleable } from "./components/Toggleable";
+import { BlogList } from "./components/BlogList";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -73,14 +74,16 @@ function App() {
           <div>
             {user} logged in <Logout onInactive={loggedout} />
           </div>
-          <Toggleable ref={createBlogRef} toggleLabel={"Create a Blog!"}>
+          <Toggleable
+            ref={createBlogRef}
+            toggleLabel={"Create a Blog!"}
+            toggleLabelClose={"Cancel"}
+          >
             <CreateBlog onNewBlogCreated={getNewBlog} />
           </Toggleable>
+          <BlogList blogs={blogs} />
         </>
       )}
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
     </div>
   );
 }
