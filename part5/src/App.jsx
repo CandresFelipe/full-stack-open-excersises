@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Blog } from "./components/Blog";
 import { getLocalStorageToken } from "./services/storage";
 import { LogIn } from "./components/Login";
@@ -7,12 +7,14 @@ import { Logout } from "./components/Logout";
 import { CreateBlog } from "./components/CreateBlog";
 import "./styles.css";
 import { Notification } from "./components/Notification";
+import { Toggleable } from "./components/Toggleable";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [newBlogState, setNewBlogState] = useState(undefined);
   const [isAutenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const createBlogRef = useRef(null);
   const data = getLocalStorageToken();
 
   useEffect(() => {
@@ -71,7 +73,9 @@ function App() {
           <div>
             {user} logged in <Logout onInactive={loggedout} />
           </div>
-          <CreateBlog onNewBlogCreated={getNewBlog} />
+          <Toggleable ref={createBlogRef} toggleLabel={"Create a Blog!"}>
+            <CreateBlog onNewBlogCreated={getNewBlog} />
+          </Toggleable>
         </>
       )}
       {blogs.map((blog) => (
