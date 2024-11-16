@@ -49,15 +49,7 @@ blogRouter.post('/create', async (request, response, next) => {
 blogRouter.delete('/:id', async (request, response, next) => {
   const id = request.params.id
 
-  try {
-    const user = request.user
-    
-    const blog = await Blog.findById(id)
-
-    if(user.id.toString() !== blog.user.id.toString()) {
-      return response.status(403).json({error: 'Forbiden action, user not valid for performing such action'})
-    }
-
+  try {    
     await Blog.findByIdAndDelete(id)  
     response.sendStatus(204)
   } catch(err) {

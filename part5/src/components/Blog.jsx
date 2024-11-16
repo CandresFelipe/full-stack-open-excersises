@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Toggleable } from "./Toggleable";
 import { Button } from "./Button";
 
-export const Blog = ({ blog, updatedBlog }) => {
+export const Blog = ({ blog, updatedBlog, onDeleteBlog }) => {
   const [likes, setLikes] = useState(blog.likes);
   const blogStyle = {
     paddingTop: 10,
@@ -20,6 +20,12 @@ export const Blog = ({ blog, updatedBlog }) => {
     });
   };
 
+  const _onDeleteBlog = () => {
+    if (window.confirm(`Remove blog ${blog.title}`)) {
+      onDeleteBlog(blog.id);
+    }
+  };
+
   return (
     <div style={blogStyle}>
       {blog.title}:{" "}
@@ -29,6 +35,7 @@ export const Blog = ({ blog, updatedBlog }) => {
           {`Likes: ${likes}`} <Button label={"like"} onClick={onUpdateBlog} />
         </p>
         <p>{blog.author}</p>
+        <Button label={"delete"} onClick={_onDeleteBlog} />
       </Toggleable>
     </div>
   );
