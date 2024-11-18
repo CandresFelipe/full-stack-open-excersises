@@ -12,15 +12,15 @@ const setToken = newToken => {
 const authHeaders = (_token) => {
   return {
     headers: {
-    'Authorization': _token
+      'Authorization': _token
+    }
   }
-}
 }
 
 const getBlogsByUser = async () => {
 
   const response = await axios.get(URL, authHeaders(token))
-  
+
   return response.data
 }
 

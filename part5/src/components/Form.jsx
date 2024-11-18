@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Button } from "./Button";
 
 export const Form = ({ onSubmit, inputs, buttonLabel }) => {
@@ -18,4 +19,10 @@ export const Form = ({ onSubmit, inputs, buttonLabel }) => {
       <Button label={buttonLabel} />
     </form>
   );
+};
+
+Form.prototype = {
+  onSubmit: PropTypes.func.isRequired,
+  inputs: PropTypes.object.isRequired,
+  buttonLabel: PropTypes.string.isRequired,
 };
