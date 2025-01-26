@@ -21,6 +21,7 @@ export default [{
   'plugin:react/recommended',
   'plugin:react/jsx-runtime',
   'plugin:react-hooks/recommended',
+  'plugin:vitest-globals/recommended'
 )), {
   plugins: {
     'react-refresh': reactRefresh,
@@ -51,7 +52,7 @@ export default [{
       'unix'
     ],
     'quotes': [
-      'error',
+      'warn',
       'single'
     ],
     'semi': [

@@ -39,5 +39,8 @@ export const Toggleable = forwardRef(
 Toggleable.propTypes = {
   toggleLabel: PropTypes.string.isRequired,
   toggleLabelClose: PropTypes.string,
-  children: PropTypes.arrayOf(PropTypes.elementType).isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.arrayOf(PropTypes.node),
+  ]).isRequired,
 };
