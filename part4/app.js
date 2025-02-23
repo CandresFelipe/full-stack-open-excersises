@@ -6,6 +6,7 @@ const blogRouter = require('./src/controller/blogs')
 const logger = require('./src/utils/middlewares')
 const mongoose = require('mongoose')
 const userRouter = require('./src/controller/user')
+const testRouter = require('./src/controller/tests');
 const loginRouter = require('./src/controller/login')
 const helpers = require('./src/utils/list_helpers')
 
@@ -22,6 +23,10 @@ app.use(helpers.tokenExtractor)
 app.use('/api/blogs',helpers.userExtractor, blogRouter)
 app.use('/api/user', userRouter)
 app.use('/api/user', loginRouter)
+
+if(process.env.NODE_ENV === 'test') {
+    app.use('/api/test', testRouter)
+}
 
 app.use(logger.errorHandler)
 

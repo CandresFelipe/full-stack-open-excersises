@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken')
 userRouter.post('/sign-up', async (request, response, next) => {
     const {userName, name, password } = request.body
 
-
     try {
 
         if(password.length <= 3) {
@@ -15,16 +14,15 @@ userRouter.post('/sign-up', async (request, response, next) => {
 
         const saltRounds = 10
         const passwordHash = await bcrypt.hash(password, saltRounds)
-    const user = new User({
-        userName,
-        name,
-        passwordHash
-    })
+        const user = new User({
+            userName,
+            name,
+            passwordHash
+        })
 
+        const jwtoken = jwt.sign({userName, userId: user.id}, process.env.SECRET)
 
-    const jwtoken = jwt.sign({userName, userId: user.id}, process.env.SECRET)
-
-    const savedUser = await user.save()
+        const savedUser = await user.save()
 
     response.status(201).send({token: jwtoken, user: savedUser})
     }catch (err) {
