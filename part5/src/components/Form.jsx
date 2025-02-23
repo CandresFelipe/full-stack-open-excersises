@@ -7,8 +7,9 @@ export const Form = ({ onSubmit, inputs, buttonLabel }) => {
       <div>
         {inputs.map((input) => (
           <div key={input.label}>
-            {input.label} :{" "}
+            <label htmlFor={input.label}>{`${input.label}`}</label>
             <input
+              id={input.label}
               value={input.value}
               onChange={input.onChange}
               type={input.label === "Password" ? "password" : "text"}
