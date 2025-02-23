@@ -3,6 +3,11 @@ export const Notification = ({ message, type }) => {
     return null;
   }
   return (
-    <div className={type === "error" ? "error" : "success"}>{message}</div>
+    <div
+      data-testid={`notification-${type}`}
+      className={type === "error" ? "error" : "success"}
+    >
+      {message}
+    </div>
   );
 };

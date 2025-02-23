@@ -8,5 +8,7 @@ export const Logout = ({ onInactive }) => {
     console.log("[logout]: Token removed");
   };
 
-  return <Button onClick={onLogout} label={"logout"} />;
+  const buttonLabel = "logout";
+
+  return <Button testId={buttonLabel} onClick={onLogout} label={buttonLabel} />;
 };

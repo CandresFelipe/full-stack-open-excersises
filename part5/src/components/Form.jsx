@@ -10,6 +10,7 @@ export const Form = ({ onSubmit, inputs, buttonLabel }) => {
             <label htmlFor={input.label}>{`${input.label}`}</label>
             <input
               id={input.label}
+              data-testid={input.testId}
               value={input.value}
               onChange={input.onChange}
               type={input.label === "Password" ? "password" : "text"}
@@ -17,7 +18,7 @@ export const Form = ({ onSubmit, inputs, buttonLabel }) => {
           </div>
         ))}
       </div>
-      <Button label={buttonLabel} />
+      <Button testId={buttonLabel} label={buttonLabel} />
     </form>
   );
 };

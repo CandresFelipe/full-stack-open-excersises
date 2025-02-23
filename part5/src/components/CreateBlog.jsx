@@ -14,16 +14,19 @@ export const CreateBlog = ({ onNewBlogCreated }) => {
   const inputs = [
     {
       label: "Title",
+      testId: "title",
       onChange: onChangeTitle,
       value: title,
     },
     {
       label: "Author",
+      testId: "author",
       onChange: onChangeAuthor,
       value: author,
     },
     {
       label: "Url",
+      testId: "url",
       onChange: onChangeUrl,
       value: url,
     },

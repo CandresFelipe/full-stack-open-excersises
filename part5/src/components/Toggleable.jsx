@@ -3,7 +3,7 @@ import { Button } from "./Button";
 import PropTypes from "prop-types";
 
 export const Toggleable = forwardRef(
-  ({ toggleLabel, toggleLabelClose, children }, ref) => {
+  ({ toggleLabel, toggleLabelClose, testId, children }, ref) => {
     const [openToggle, setOpenToggle] = useState(false);
     const hideCreateButton = { display: openToggle ? "none" : "" };
     const hideContent = { display: openToggle ? "" : "none" };
@@ -23,12 +23,16 @@ export const Toggleable = forwardRef(
     return (
       <div>
         <div style={hideCreateButton}>
-          <Button label={toggleLabel} onClick={onOpen} />
+          <Button testId={testId} label={toggleLabel} onClick={onOpen} />
         </div>
         <div style={hideContent}>
           {children}
           {toggleLabelClose && (
-            <Button label={toggleLabelClose} onClick={onOpen} />
+            <Button
+              testId={String(toggleLabelClose).toLowerCase()}
+              label={toggleLabelClose}
+              onClick={onOpen}
+            />
           )}
         </div>
       </div>

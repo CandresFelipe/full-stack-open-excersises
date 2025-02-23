@@ -24,9 +24,13 @@ const getUser = async () => {
       'Authorization': `Bearer ${token}`
     }
   }
-  const response = await axios.get(URL, config)
-
-  return response.data
+  try {
+    const response = await axios.get(URL, config)
+    return response.data
+  }catch (error) {
+    console.log(`[Error getUser]: ${error}`)
+    return null
+  }
 }
 
 export const loginService = {

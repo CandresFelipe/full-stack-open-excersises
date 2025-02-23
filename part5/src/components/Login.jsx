@@ -16,10 +16,12 @@ export const LogIn = ({ onActive }) => {
     {
       label: "Username",
       onChange: onChangeUsername,
+      testId: "username",
       value: username,
     },
     {
       label: "Password",
+      testId: "password",
       onChange: onChangePassword,
       value: password,
     },
@@ -43,7 +45,7 @@ export const LogIn = ({ onActive }) => {
       setUsername("");
       setTimeout(() => {
         setError(undefined);
-      }, 5000);
+      }, 3000);
     }
   };
 

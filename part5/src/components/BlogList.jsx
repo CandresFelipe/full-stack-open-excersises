@@ -1,31 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { blogService } from "../services/blogs";
 import { Blog } from "./Blog";
 
 export const BlogList = ({ blogs }) => {
-  const [_blogs, set_Blogs] = useState(blogs);
+  const [blogList, setBlogList] = useState([]);
 
+  // Sync blogList state with props
   useEffect(() => {
-    if (_blogs.length) return;
-
-    set_Blogs(blogs);
+    setBlogList(blogs);
   }, [blogs]);
 
-  const onUpdateBlog = async (blog) => {
-    await blogService.updateBlog(blog);
+  const onUpdateBlog = async (updatedBlog) => {
+    const response = await blogService.updateBlog(updatedBlog);
+
+    // Update state correctly by replacing the updated blog
+    setBlogList((prevBlogs) =>
+      prevBlogs.map((b) => (b.id === response.id ? response : b))
+    );
   };
 
   const onDeleteBlog = async (id) => {
     await blogService.deleteBlog(id);
-    const updatedBlogs = _blogs.filter((blog) => blog.id !== id);
-    set_Blogs(updatedBlogs);
+    setBlogList((prevBlogs) => prevBlogs.filter((b) => b.id !== id));
   };
 
-  const sortedBlogs = (bgs) => bgs?.sort((a, b) => a.likes - b.likes);
+  // Sorting blogs based on likes (highest first)
+  const sortedBlogs = blogList.slice().sort((a, b) => b.likes - a.likes);
 
   return (
-    <div>
-      {sortedBlogs(_blogs).map((blog) => (
+    <div data-testid="blog-list">
+      {sortedBlogs.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}

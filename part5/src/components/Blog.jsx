@@ -11,13 +11,11 @@ const blogStyle = {
 };
 
 export const Blog = ({ blog, updatedBlog, onDeleteBlog }) => {
-  const [likes, setLikes] = useState(blog.likes);
-
-  const onUpdateBlog = () => {
-    setLikes(likes + 1);
+  const onUpdateBlog = (event) => {
+    event.preventDefault();
     updatedBlog({
       ...blog,
-      likes: likes + 1,
+      likes: blog.likes + 1,
     });
   };
 
@@ -28,15 +26,20 @@ export const Blog = ({ blog, updatedBlog, onDeleteBlog }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div data-testid="blog-item" style={blogStyle}>
       {blog.title}:{" "}
-      <Toggleable toggleLabel={"Show"} toggleLabelClose={"Hide"}>
-        <p>{`url: ${blog.url}`}</p>
-        <p>
-          {`Likes: ${likes}`} <Button label={"like"} onClick={onUpdateBlog} />
+      <Toggleable
+        toggleLabel={"Show"}
+        testId={"show"}
+        toggleLabelClose={"Hide"}
+      >
+        <p data-testid="p-url">{`url: ${blog.url}`}</p>
+        <p data-testid="p-likes">
+          {`Likes: ${blog.likes}`}{" "}
+          <Button testId={"like"} label={"like"} onClick={onUpdateBlog} />
         </p>
-        <p>{blog.author}</p>
-        <Button label={"delete"} onClick={_onDeleteBlog} />
+        <p data-testid="p-author">{blog.author}</p>
+        <Button testId={"delete"} label={"delete"} onClick={_onDeleteBlog} />
       </Toggleable>
     </div>
   );

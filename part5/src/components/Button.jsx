@@ -1,7 +1,7 @@
 export const Button = (props) => {
-  const { label, ...rest } = props;
+  const { label, testId, ...rest } = props;
   return (
-    <button type="submit" {...rest}>
+    <button type="submit" data-testid={`button-${testId}`} {...rest}>
       {label}
     </button>
   );

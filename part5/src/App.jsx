@@ -33,14 +33,14 @@ function App() {
       setBlogs(data.blogs);
       setUser(data.name);
     });
-  }, [isAutenticated]);
+  }, [isAutenticated, blogs.length]);
 
   useEffect(() => {
     if (!newBlogState) return;
 
     setTimeout(() => {
       setNewBlogState(undefined);
-    }, 5000);
+    }, 2000);
   }, [newBlogState]);
 
   const loggedIn = (value) => {
@@ -51,7 +51,7 @@ function App() {
     if (!newBlog) return;
 
     setNewBlogState(newBlog);
-    setBlogs(blogs.concat(newBlog));
+    setBlogs((prevBlogs) => [...prevBlogs, newBlog]);
   };
 
   const loggedout = (value) => {
@@ -65,7 +65,7 @@ function App() {
   return (
     <div>
       <h2>blogs</h2>
-      {isAutenticated && (
+      {isAutenticated && !!user && (
         <>
           <Notification
             message={`A new blog ${newBlogState?.title} by ${newBlogState?.author} added!`}
@@ -76,6 +76,7 @@ function App() {
           </div>
           <Toggleable
             ref={createBlogRef}
+            testId={"create-blog"}
             toggleLabel={"Create a Blog!"}
             toggleLabelClose={"Cancel"}
           >
@@ -84,6 +85,7 @@ function App() {
           <BlogList blogs={blogs} />
         </>
       )}
+      {!isAutenticated && <LogIn onActive={loggedIn} />}
     </div>
   );
 }
