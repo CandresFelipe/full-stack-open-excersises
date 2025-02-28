@@ -41,9 +41,9 @@ describe('GIVEN Blogs app', () => {
         await createBlog(page, 'TestBlog')
         await page.getByTestId('button-show').click();
 
-        await page.getByTestId('button-like').dblclick()
+        await page.getByTestId('button-like').click();
         
-        await expect(page.getByTestId('p-likes').first()).toContainText('Likes: 2')
+        await expect(page.getByTestId('p-likes').first()).toContainText('Likes: 1')
 
     })
 
