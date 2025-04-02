@@ -1,24 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getFormattedAnecdotes } from "../reducers/selectors";
-import { increaseVote, setAnecdotes } from "../reducers/anecdoteReducer";
+import { anecdoteAsyncActions } from "../reducers/anecdoteReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import { useEffect } from "react";
-import { anecdoteService } from "../services/anecdotes";
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
   const anecdotes = useSelector(getFormattedAnecdotes);
 
   useEffect(() => {
-    const fetchAnecdotes = async () => {
-      const data = await anecdoteService.getAll();
-      dispatch(setAnecdotes(data));
-    };
-    fetchAnecdotes();
+    dispatch(anecdoteAsyncActions.initializeAnecdotes());
   }, [dispatch]);
 
   const vote = (id) => {
-    dispatch(increaseVote(id));
+    dispatch(anecdoteAsyncActions.updateVote(id));
     const anecdoteContent = anecdotes.find(
       (anecdote) => anecdote.id === id
     ).content;

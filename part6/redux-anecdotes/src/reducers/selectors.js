@@ -17,4 +17,4 @@ export const getFormattedAnecdotes = createSelector(filterState, anecdotesState,
   return filter === '' ? sortedAnecdotes : filteredAnecdotes;
 });
 
-export const getNotification = createSelector(notificationState, (notification) => ( notification === '' ? null : notification));
+export const getNotification = createSelector(notificationState, (notification) => ( notification  === '' ? null : notification));

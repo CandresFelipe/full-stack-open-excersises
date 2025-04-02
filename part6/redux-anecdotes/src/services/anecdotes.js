@@ -13,7 +13,13 @@ async function createNew(content) {
     return response;
 }
 
+async function updateVote(id, newObject) {
+    const response = await axios.patch(`${baseUrl}/${id}`, JSON.stringify(newObject));
+    return response.data;
+}
+
 export const anecdoteService = {
     getAll,
-    createNew
+    createNew,
+    updateVote,
 }

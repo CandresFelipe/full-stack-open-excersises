@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification } from "../reducers/selectors";
-import { clearNotification } from "../reducers/notificationReducer";
+import { notificationAsyncActions } from "../reducers/notificationReducer";
 
 const style = {
   border: "solid",
@@ -13,13 +13,10 @@ const Notification = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(clearNotification());
-    }, 5000);
-    return () => clearTimeout(timer);
+    dispatch(notificationAsyncActions.cleanNotificationState(3000));
   }, [notification, dispatch]);
 
-  return notification !== "" ? <div style={style}>{notification}</div> : null;
+  return notification === null ? null : <div style={style}>{notification}</div>;
 };
 
 export default Notification;
