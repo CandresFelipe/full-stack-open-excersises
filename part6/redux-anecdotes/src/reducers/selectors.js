@@ -1,16 +1,15 @@
 import { createSelector } from "@reduxjs/toolkit";
+const filterState = (state) => state.filter;
+const anecdotesState = (state) => state.anecdotes;
+const notificationState = (state) => state.notification;
 
 const getSortedAnecdotes = (anecdotes) => [...anecdotes].sort((a, b) => b.votes - a.votes)
 const getFilteredAnecdotes = (filter, anecdotes) => {
   if(filter === '') {
-    console.log('anecdotes', anecdotes);
     return anecdotes;
   }
   return anecdotes.filter((anecdote) => anecdote.content.toLowerCase().includes(filter.toLowerCase()));
 }
-const filterState = (state) => state.filter;
-const anecdotesState = (state) => state.anecdotes;
-const notificationState = (state) => state.notification;
 
 export const getFormattedAnecdotes = createSelector(filterState, anecdotesState, (filter, anecdotes) => {
   const sortedAnecdotes = getSortedAnecdotes(anecdotes);
@@ -18,4 +17,4 @@ export const getFormattedAnecdotes = createSelector(filterState, anecdotesState,
   return filter === '' ? sortedAnecdotes : filteredAnecdotes;
 });
 
-export const getNotification = createSelector(notificationState, (notification) => notification);
+export const getNotification = createSelector(notificationState, (notification) => ( notification === '' ? null : notification));
