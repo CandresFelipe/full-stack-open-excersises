@@ -22,7 +22,6 @@ export const useCountry = (name) => {
     }).catch((error) => {
         if(error.response.status === 404) {
             setCountry({
-                ...country,
                 found: false,
             })
         }
