@@ -1,0 +1,54 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "This is my new note",
+      "id": 3
+    },
+    {
+      "content": "This is my new note",
+      "id": 4
+    },
+    {
+      "content": "Hello!",
+      "id": 5
+    },
+    {
+      "content": "Hello! two!",
+      "id": 6
+    },
+    {
+      "content": "Ed sheeran",
+      "id": "67504"
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "Michael",
+      "number": "233234",
+      "id": "52985"
+    },
+    {
+      "name": "Rob",
+      "number": "12312312",
+      "id": "11376"
+    }
+  ]
+}
