@@ -1,14 +1,15 @@
-import { removeLocalStorageToken } from "../services/storage";
-import { Button } from "./Button";
+import { useDispatch } from 'react-redux'
+import { Button } from './Button'
+import { deleteToken } from '../reducers/userReducer'
 
-export const Logout = ({ onInactive }) => {
+export const Logout = () => {
+  const dispatch = useDispatch()
   const onLogout = () => {
-    removeLocalStorageToken();
-    onInactive(false);
-    console.log("[logout]: Token removed");
-  };
+    dispatch(deleteToken())
+    console.log('[logout]: Token removed')
+  }
 
-  const buttonLabel = "logout";
+  const buttonLabel = 'logout'
 
-  return <Button testId={buttonLabel} onClick={onLogout} label={buttonLabel} />;
-};
+  return <Button testId={buttonLabel} onClick={onLogout} label={buttonLabel} />
+}

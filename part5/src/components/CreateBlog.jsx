@@ -3,8 +3,9 @@ import { Form } from './Form'
 import { blogService } from '../services/blogs'
 import { useDispatch } from 'react-redux'
 import { setNotificationState } from '../reducers/notificationReducer'
+import { addBlog } from '../reducers/blogsReducer'
 
-export const CreateBlog = ({ onNewBlogCreated }) => {
+export const CreateBlog = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [title, setTitle] = useState('')
@@ -44,7 +45,7 @@ export const CreateBlog = ({ onNewBlogCreated }) => {
         author,
         url,
       })
-      onNewBlogCreated(newBlog)
+      dispatch(addBlog(newBlog))
       dispatch(
         setNotificationState({
           message: `A new blog ${newBlog?.title} by ${newBlog?.author} added!`,

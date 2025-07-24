@@ -5,8 +5,9 @@ import { setLocalStorageToken } from '../services/storage'
 import { Notification } from './Notification'
 import { useDispatch } from 'react-redux'
 import { setNotificationState } from '../reducers/notificationReducer'
+import { setToken } from '../reducers/userReducer'
 
-export const LogIn = ({ onActive }) => {
+export const LogIn = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
@@ -37,8 +38,12 @@ export const LogIn = ({ onActive }) => {
 
     try {
       const res = await loginService.login({ username, password })
-      setLocalStorageToken(res.token)
-      onActive(true)
+      dispatch(
+        setToken({
+          token: res.token,
+          username,
+        })
+      )
       dispatch(
         setNotificationState({
           message: 'Successful login!',

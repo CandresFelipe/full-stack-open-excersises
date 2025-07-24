@@ -1,42 +1,17 @@
-import { useState, useEffect } from "react";
-import { blogService } from "../services/blogs";
-import { Blog } from "./Blog";
+import { Blog } from './Blog'
+import { useSelector } from 'react-redux'
+import { getAllBlogs } from '../selectors/blogSelectors'
 
-export const BlogList = ({ blogs }) => {
-  const [blogList, setBlogList] = useState([]);
+export const BlogList = () => {
+  const blogs = useSelector(getAllBlogs)
 
-  // Sync blogList state with props
-  useEffect(() => {
-    setBlogList(blogs);
-  }, [blogs]);
-
-  const onUpdateBlog = async (updatedBlog) => {
-    const response = await blogService.updateBlog(updatedBlog);
-
-    // Update state correctly by replacing the updated blog
-    setBlogList((prevBlogs) =>
-      prevBlogs.map((b) => (b.id === response.id ? response : b))
-    );
-  };
-
-  const onDeleteBlog = async (id) => {
-    await blogService.deleteBlog(id);
-    setBlogList((prevBlogs) => prevBlogs.filter((b) => b.id !== id));
-  };
-
-  // Sorting blogs based on likes (highest first)
-  const sortedBlogs = blogList.slice().sort((a, b) => b.likes - a.likes);
+  const sortedBlogs = blogs.slice().sort((a, b) => b.likes - a.likes)
 
   return (
     <div data-testid="blog-list">
       {sortedBlogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updatedBlog={onUpdateBlog}
-          onDeleteBlog={onDeleteBlog}
-        />
+        <Blog key={blog.id} blog={blog} />
       ))}
     </div>
-  );
-};
+  )
+}

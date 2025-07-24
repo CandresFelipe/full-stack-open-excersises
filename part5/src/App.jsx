@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { Blog } from './components/Blog'
 import { getLocalStorageToken } from './services/storage'
 import { LogIn } from './components/Login'
 import { blogService } from './services/blogs'
@@ -9,67 +8,36 @@ import './styles.css'
 import { Notification } from './components/Notification'
 import { Toggleable } from './components/Toggleable'
 import { BlogList } from './components/BlogList'
+import { useDispatch } from 'react-redux'
+import { setBlogs } from './reducers/blogsReducer'
+import { useSelector } from 'react-redux'
+import { getUserAuthenticated, getUsername } from './selectors/userSelectors'
 
 function App() {
-  const [blogs, setBlogs] = useState([])
-  const [newBlogState, setNewBlogState] = useState(undefined)
-  const [isAutenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
   const createBlogRef = useRef(null)
-  const data = getLocalStorageToken()
+  const isAuthenticated = useSelector(getUserAuthenticated)
+  const username = useSelector(getUsername)
 
   useEffect(() => {
-    if (!!isAutenticated) return
-
-    if (data) {
-      setIsAuthenticated(!!data)
-    }
-  }, [isAutenticated])
-
-  useEffect(() => {
-    if (!isAutenticated) return
-    blogService.setToken(data)
+    if (!isAuthenticated) return
     blogService.getBlogsByUser().then((data) => {
-      setBlogs(data.blogs)
-      setUser(data.name)
+      dispatch(setBlogs(data.blogs))
     })
-  }, [isAutenticated, blogs.length])
+  }, [isAuthenticated])
 
-  useEffect(() => {
-    if (!newBlogState) return
-
-    setTimeout(() => {
-      setNewBlogState(undefined)
-    }, 2000)
-  }, [newBlogState])
-
-  const loggedIn = (value) => {
-    setIsAuthenticated(value)
-  }
-
-  const getNewBlog = (newBlog) => {
-    if (!newBlog) return
-
-    setNewBlogState(newBlog)
-    setBlogs((prevBlogs) => [...prevBlogs, newBlog])
-  }
-
-  const loggedout = (value) => {
-    setIsAuthenticated(value)
-  }
-
-  if (!isAutenticated) {
-    return <LogIn onActive={loggedIn} />
+  if (!isAuthenticated) {
+    return <LogIn />
   }
 
   return (
     <div>
       <h2>blogs</h2>
-      {isAutenticated && !!user && (
+      {isAuthenticated && (
         <>
           <Notification />
           <div>
-            {user} logged in <Logout onInactive={loggedout} />
+            {username} logged in <Logout />
           </div>
           <Toggleable
             ref={createBlogRef}
@@ -77,12 +45,11 @@ function App() {
             toggleLabel={'Create a Blog!'}
             toggleLabelClose={'Cancel'}
           >
-            <CreateBlog onNewBlogCreated={getNewBlog} />
+            <CreateBlog />
           </Toggleable>
-          <BlogList blogs={blogs} />
+          <BlogList />
         </>
       )}
-      {!isAutenticated && <LogIn onActive={loggedIn} />}
     </div>
   )
 }
